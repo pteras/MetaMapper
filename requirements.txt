@@ -1,5 +1,4 @@
 Pillow
 hachoir
 fpdf
-image
-tk
+customtkinter
