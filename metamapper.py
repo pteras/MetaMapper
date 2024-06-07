@@ -1,6 +1,7 @@
 import os
-from tkinter import Tk, Label, Button, Entry, StringVar, filedialog, Checkbutton, BooleanVar, Radiobutton, IntVar
-from tkinter import messagebox
+import datetime
+from tkinter import Tk, StringVar, filedialog, messagebox
+import customtkinter as ctk
 from PIL import Image
 from PIL.ExifTags import TAGS
 from hachoir.metadata import extractMetadata
@@ -48,7 +49,14 @@ class PDFReport(FPDF):
         self.multi_cell(0, 10, body)
         self.ln()
 
-def create_pdf_report(exif_data, output_path):
+
+def create_pdf_report(exif_data, output_directory):
+    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    output_path = os.path.join(output_directory, f'metamapper_{timestamp}.pdf')
+
+    # Create the directory if it doesn't exist
+    os.makedirs(output_directory, exist_ok=True)
+
     pdf = PDFReport()
     pdf.add_page()
     
@@ -58,14 +66,21 @@ def create_pdf_report(exif_data, output_path):
         pdf.chapter_body(body)
     
     pdf.output(output_path)
+    return output_path
 
-def create_text_report(exif_data, output_path):
+def create_text_report(exif_data, output_directory):
+    timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    output_path = os.path.join(output_directory, f'metamapper_{timestamp}.txt')
+    os.makedirs(output_directory, exist_ok=True)
+
     with open(output_path, 'w') as file:
         for filename, data in exif_data.items():
             file.write(f"{filename}\n")
             for key, value in data.items():
                 file.write(f"  {key}: {value}\n")
             file.write("\n")
+
+    return output_path
 
 def generate_report():
     directory = folder_path.get()
@@ -103,37 +118,52 @@ def generate_report():
 def select_folder():
     folder = filedialog.askdirectory()
     folder_path.set(folder)
+    if not contains_compatible_files(folder):
+        messagebox.showerror("Error", "The folder contains no compatible images/videos.")
+
+def contains_compatible_files(directory):
+    image_extensions = ('.jpg', '.jpeg', '.png')
+    video_extensions = ('.mp4', '.mov', '.avi')
+    for filename in os.listdir(directory):
+        if filename.lower().endswith(image_extensions) or filename.lower().endswith(video_extensions):
+            return True
+    return False
 
 def select_output_folder():
     folder = filedialog.askdirectory()
     output_folder_path.set(folder)
 
-# Setting up the Tkinter window
-root = Tk()
+# Themes
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("blue")
+
+# Setting up the customTkinter window
+root = ctk.CTk()
 root.title("MetaMapper")
 
-folder_path = StringVar()
-output_folder_path = StringVar()
-images_var = BooleanVar()
-videos_var = BooleanVar()
-output_format_var = IntVar()
+folder_path = StringVar(value=os.path.dirname(__file__))
+output_folder_path = output_folder_path = StringVar(value=os.path.join(os.path.dirname(__file__), "reports"))
+images_var = ctk.BooleanVar()
+videos_var = ctk.BooleanVar()
+output_format_var = ctk.IntVar()
 
-Label(root, text="Select Folder:").grid(row=0, column=0, padx=10, pady=10, sticky="e")
-Entry(root, textvariable=folder_path, width=50).grid(row=0, column=1, padx=10, pady=10)
-Button(root, text="Browse", command=select_folder).grid(row=0, column=2, padx=10, pady=10)
+# Create widgets
+ctk.CTkLabel(master=root, text="Select Folder:").grid(row=0, column=0, padx=10, pady=10, sticky="e")
+ctk.CTkEntry(root, textvariable=folder_path, width=50).grid(row=0, column=1, padx=10, pady=10)
+ctk.CTkButton(root, text="Browse", command=select_folder).grid(row=0, column=2, padx=10, pady=10)
 
-Label(root, text="Output Folder:").grid(row=1, column=0, padx=10, pady=10, sticky="e")
-Entry(root, textvariable=output_folder_path, width=50).grid(row=1, column=1, padx=10, pady=10)
-Button(root, text="Browse", command=select_output_folder).grid(row=1, column=2, padx=10, pady=10)
+ctk.CTkLabel(master=root, text="Output Folder:").grid(row=1, column=0, padx=10, pady=10, sticky="e")
+ctk.CTkEntry(root, textvariable=output_folder_path, width=50).grid(row=1, column=1, padx=10, pady=10)
+ctk.CTkButton(root, text="Browse", command=select_output_folder).grid(row=1, column=2, padx=10, pady=10)
 
-Label(root, text="Select File Types:").grid(row=2, column=0, padx=10, pady=10, sticky="e")
-Checkbutton(root, text="Images", variable=images_var).grid(row=2, column=1, sticky="w")
-Checkbutton(root, text="Videos", variable=videos_var).grid(row=2, column=1)
+ctk.CTkLabel(master=root, text="Select File Types:").grid(row=2, column=0, padx=10, pady=10, sticky="e")
+ctk.CTkCheckBox(root, text="Images", variable=images_var).grid(row=2, column=1, sticky="w")
+ctk.CTkCheckBox(root, text="Videos", variable=videos_var).grid(row=2, column=2, sticky="w")
 
-Label(root, text="Select Output Format:").grid(row=3, column=0, padx=10, pady=10, sticky="e")
-Radiobutton(root, text="PDF", variable=output_format_var, value=1).grid(row=3, column=1, sticky="w")
-Radiobutton(root, text="Text", variable=output_format_var, value=2).grid(row=3, column=1)
+ctk.CTkLabel(master=root, text="Select Output Format:").grid(row=3, column=0, padx=10, pady=10, sticky="e")
+ctk.CTkRadioButton(root, text="PDF", variable=output_format_var, value=1).grid(row=3, column=1, sticky="w")
+ctk.CTkRadioButton(root, text="Text", variable=output_format_var, value=2).grid(row=3, column=2, sticky="w")
 
-Button(root, text="Generate Report", command=generate_report).grid(row=4, column=0, columnspan=3, pady=20)
+ctk.CTkButton(root, text="Generate Report", command=generate_report).grid(row=4, column=0, columnspan=3, pady=20)
 
 root.mainloop()
