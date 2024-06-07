@@ -8,6 +8,26 @@ MetaMapper is a lightweight script designed to extract and organize EXIF data fr
 - Generate reports in PDF or text format
 - User-friendly interface
 
+## Supported Video and Image Extensions
+
+MetaMapper supports the following tested image and video file formats for extracting EXIF data:
+
+### Supported Image Extensions
+- .jpg
+- .jpeg
+- .png
+- .bmp
+- .gif
+- .tiff
+
+### Supported Video Extensions
+- .mp4
+- .mov
+- .avi
+- .mkv
+- .wmv
+- .flv
+
 ## Installation
 
 1. **Clone the repository:**
