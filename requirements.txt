@@ -1,0 +1,5 @@
+Pillow
+hachoir
+fpdf
+image
+ttkthemes
