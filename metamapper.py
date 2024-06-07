@@ -122,8 +122,10 @@ def select_folder():
         messagebox.showerror("Error", "The folder contains no compatible images/videos.")
 
 def contains_compatible_files(directory):
-    image_extensions = ('.jpg', '.jpeg', '.png')
-    video_extensions = ('.mp4', '.mov', '.avi')
+    # Supported image extensions
+    image_extensions = ('.jpg', '.jpeg', '.png', '.bmp', '.gif', '.tiff')
+    # Supported video extensions
+    video_extensions = ('.mp4', '.mov', '.avi', '.mkv', '.wmv', '.flv')
     for filename in os.listdir(directory):
         if filename.lower().endswith(image_extensions) or filename.lower().endswith(video_extensions):
             return True
