@@ -6,7 +6,8 @@ MetaMapper is a lightweight script designed to extract and organize EXIF data fr
 
 - Extract EXIF data from multiple images and videos in a selected folder
 - Generate reports in PDF or text format
-- User-friendly interface
+- User-friendly interface'
+- Great tool for CTF
 
 ## Supported Video and Image Extensions
 
