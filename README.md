@@ -61,7 +61,7 @@ MetaMapper supports the following tested image and video file formats for extrac
 ## Screenshots
 
 ![Main Interface](screenshots/main.PNG)
-![Example Report Output](https://github.com/user-attachments/assets/cadb2360-1d48-466a-b5b1-f2b2652cb267)
+![Example Report Output](https://github.com/user-attachments/assets/bfaa0b21-3bff-4827-8cf7-83deb84e05b1)
 
 ## Contributing
 
